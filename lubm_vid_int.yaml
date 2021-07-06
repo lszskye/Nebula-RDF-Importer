@@ -1,0 +1,708 @@
+version: v2
+description: lubm
+removeTempFiles: false
+clientSettings:
+  retry: 3
+  concurrency: 12 # number of graph clients
+  channelBufferSize: 1
+  space: lubm4
+  connection:
+    user: root
+    password: nebula
+    address: 127.0.0.1:9669
+  postStart:
+    commands: |
+      CREATE SPACE IF NOT EXISTS lubm4(PARTITION_NUM = 5, REPLICA_FACTOR = 1, vid_type = int64);
+      USE lubm4;
+      CREATE TAG IF NOT EXISTS University(uri string, name string);
+      CREATE TAG IF NOT EXISTS Department(uri string, name string);
+      CREATE TAG IF NOT EXISTS FullProfessor(uri string, name string, emailAddress string, telephone string, researchInterest string);
+      CREATE TAG IF NOT EXISTS AssociateProfessor(uri string, name string, emailAddress string, telephone string, researchInterest string);
+      CREATE TAG IF NOT EXISTS AssistantProfessor(uri string, name string, emailAddress string, telephone string, researchInterest string);
+      CREATE TAG IF NOT EXISTS Lecturer(uri string, name string, emailAddress string, telephone string);
+      CREATE TAG IF NOT EXISTS UndergraduateStudent(uri string, name string, emailAddress string, telephone string);
+      CREATE TAG IF NOT EXISTS GraduateStudent(uri string, name string, emailAddress string, telephone string);
+      CREATE TAG IF NOT EXISTS ResearchGroup(uri string);
+      CREATE TAG IF NOT EXISTS Publication(uri string, name string);
+      CREATE TAG IF NOT EXISTS Course(uri string, name string);
+      CREATE TAG IF NOT EXISTS GraduateCourse(uri string, name string);
+      CREATE TAG IF NOT EXISTS TeachingAssistant(uri string, name string, emailAddress string, telephone string);
+      CREATE TAG IF NOT EXISTS ResearchAssistant(uri string, name string, emailAddress string, telephone string);
+      
+      CREATE EDGE IF NOT EXISTS subOrganizationOf();
+      CREATE EDGE IF NOT EXISTS teacherOf();
+      CREATE EDGE IF NOT EXISTS undergraduateDegreeFrom();
+      CREATE EDGE IF NOT EXISTS mastersDegreeFrom();
+      CREATE EDGE IF NOT EXISTS doctoralDegreeFrom();
+      CREATE EDGE IF NOT EXISTS worksFor();
+      CREATE EDGE IF NOT EXISTS headOf();
+      CREATE EDGE IF NOT EXISTS memberOf();
+      CREATE EDGE IF NOT EXISTS takesCourse();
+      CREATE EDGE IF NOT EXISTS advisor();
+      CREATE EDGE IF NOT EXISTS publicationAuthor();
+      CREATE EDGE IF NOT EXISTS teachingAssistantOf();
+
+    afterPeriod: 8s
+logPath: ./err/test.log
+files:
+  - path: /home/skye/nebula/vertex/AssistantProfessor.csv
+    failDataPath: ./err/data/AssistantProfessor.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          index: 0
+          type: int
+        tags:
+          - name: AssistantProfessor
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4
+              - name: researchInterest
+                type: string
+                index: 5
+
+  - path: /home/skye/nebula/vertex/AssociateProfessor.csv
+    failDataPath: ./err/data/AssociateProfessor.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          index: 0
+          type: int
+        tags:
+          - name: AssociateProfessor
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4
+              - name: researchInterest
+                type: string
+                index: 5
+              
+
+  - path: /home/skye/nebula/vertex/Course.csv
+    failDataPath: ./err/data/Course.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          index: 0
+          type: int
+        tags:
+          - name: Course
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+
+  - path: /home/skye/nebula/vertex/Department.csv
+    failDataPath: ./err/data/Department.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          index: 0
+          type: int
+        tags:
+          - name: Department
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+
+  - path: /home/skye/nebula/vertex/FullProfessor.csv
+    failDataPath: ./err/data/FullProfessor.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          index: 0
+          type: int
+        tags:
+          - name: FullProfessor
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4
+              - name: researchInterest
+                type: string
+                index: 5
+
+  - path: /home/skye/nebula/vertex/GraduateCourse.csv
+    failDataPath: ./err/data/GraduateCourse.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          index: 0
+          type: int
+        tags:
+          - name: GraduateCourse
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+             
+
+  - path: /home/skye/nebula/vertex/GraduateStudent.csv
+    failDataPath: ./err/data/GraduateStudent.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          index: 0
+          type: int
+        tags:
+          - name: GraduateStudent
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4
+
+  - path: /home/skye/nebula/vertex/Lecturer.csv
+    failDataPath: ./err/data/Lecturer.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          type: int
+          index: 0
+        tags:
+          - name: Lecturer
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4
+                
+  - path: /home/skye/nebula/vertex/Publication.csv
+    failDataPath: ./err/data/Publication.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          type: int
+          index: 0
+        tags:
+          - name: Publication
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+                
+  - path: /home/skye/nebula/vertex/ResearchAssistant.csv
+    failDataPath: ./err/data/ResearchAssistant.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          type: int
+          index: 0
+        tags:
+          - name: ResearchAssistant
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4
+             
+  - path: /home/skye/nebula/vertex/ResearchAssistant.csv
+    failDataPath: ./err/data/ResearchAssistant.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          type: int
+          index: 0
+        tags:
+          - name: ResearchAssistant
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4                                   
+
+  - path: /home/skye/nebula/vertex/ResearchGroup.csv
+    failDataPath: ./err/data/ResearchGroup.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          type: int
+          index: 0
+        tags:
+          - name: ResearchGroup
+            props:
+              - name: uri
+                type: string
+                index: 1
+
+  - path: /home/skye/nebula/vertex/TeachingAssistant.csv
+    failDataPath: ./err/data/TeachingAssistant.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          type: int
+          index: 0
+        tags:
+          - name: TeachingAssistant
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4                 
+
+  - path: /home/skye/nebula/vertex/UndergraduateStudent.csv
+    failDataPath: ./err/data/UndergraduateStudent.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          type: int
+          index: 0
+        tags:
+          - name: UndergraduateStudent
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2
+              - name: emailAddress
+                type: string
+                index: 3
+              - name: telephone
+                type: string
+                index: 4    
+
+  - path: /home/skye/nebula/vertex/University.csv
+    failDataPath: ./err/data/University.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: vertex
+      vertex:
+        vid:
+          type: int
+          index: 0
+        tags:
+          - name: University
+            props:
+              - name: uri
+                type: string
+                index: 1
+              - name: name
+                type: string
+                index: 2   
+                
+  - path: /home/skye/nebula/edge/advisor.csv
+    failDataPath: ./err/data/advisor.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: advisor
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int
+
+  - path: /home/skye/nebula/edge/doctoralDegreeFrom.csv
+    failDataPath: ./err/data/doctoralDegreeFrom.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: doctoralDegreeFrom
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int
+ 
+  - path: /home/skye/nebula/edge/headOf.csv
+    failDataPath: ./err/data/headOf.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: headOf
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int
+          
+  - path: /home/skye/nebula/edge/mastersDegreeFrom.csv
+    failDataPath: ./err/data/mastersDegreeFrom.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: mastersDegreeFrom
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int  
+          
+  - path: /home/skye/nebula/edge/memberOf.csv
+    failDataPath: ./err/data/memberOf.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: memberOf
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int 
+          
+  - path: /home/skye/nebula/edge/publicationAuthor.csv
+    failDataPath: ./err/data/publicationAuthor.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: publicationAuthor
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int   
+          
+  - path: /home/skye/nebula/edge/subOrganizationOf.csv
+    failDataPath: ./err/data/subOrganizationOf.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: subOrganizationOf
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int             
+                       
+  - path: /home/skye/nebula/edge/takesCourse.csv
+    failDataPath: ./err/data/takesCourse.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: takesCourse
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int     
+          
+  - path: /home/skye/nebula/edge/teacherOf.csv
+    failDataPath: ./err/data/teacherOf.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: teacherOf
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int         
+          
+  - path: /home/skye/nebula/edge/teachingAssistantOf.csv
+    failDataPath: ./err/data/teachingAssistantOf.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: teachingAssistantOf
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int 
+          
+  - path: /home/skye/nebula/edge/undergraduateDegreeFrom.csv
+    failDataPath: ./err/data/undergraduateDegreeFrom.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: undergraduateDegreeFrom
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int  
+          
+  - path: /home/skye/nebula/edge/worksFor.csv
+    failDataPath: ./err/data/worksFor.csv
+    batchSize: 100
+    type: csv
+    csv:
+      withHeader: false
+      withLabel: false
+      delimiter: "|"
+    schema:
+      type: edge
+      edge:
+        name: worksFor
+        withRanking: false
+        srcVID:
+          index: 0
+          type: int
+        dstVID:
+          index: 1
+          type: int                                                                                                             
